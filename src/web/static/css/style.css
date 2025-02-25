@@ -1,0 +1,41 @@
+/* Style personnalisé en plus de Bootstrap */
+.hero-section {
+    background-color: #f8f9fa;
+    padding: 4rem 0;
+    margin-bottom: 2rem;
+    border-radius: 10px;
+}
+
+.card {
+    transition: transform 0.3s ease;
+    margin-bottom: 1rem;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.navbar {
+    margin-bottom: 2rem;
+}
+
+.footer {
+    margin-top: 4rem;
+}
+
+#predictionResult {
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.form-label {
+    font-weight: 500;
+}
+
+.alert {
+    border-radius: 10px;
+}

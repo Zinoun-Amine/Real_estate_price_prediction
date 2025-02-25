@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Accueil - Prédiction Immobilière{% endblock %}
+
+{% block content %}
+<div class="hero-section text-center py-5">
+    <h1 class="display-4">Prédiction des Prix Immobiliers</h1>
+    <p class="lead">Utilisez l'intelligence artificielle pour estimer le prix de votre bien immobilier</p>
+    <a href="/predict" class="btn btn-primary btn-lg mt-3">Commencer une prédiction</a>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Prédiction Précise</h5>
+                <p class="card-text">Notre modèle utilise des algorithmes avancés pour des estimations précises.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Analyse Détaillée</h5>
+                <p class="card-text">Obtenez une analyse complète des facteurs influençant le prix.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Données à Jour</h5>
+                <p class="card-text">Basé sur les dernières données du marché immobilier.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

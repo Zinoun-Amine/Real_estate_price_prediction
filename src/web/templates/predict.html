@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}Prédiction - Real Estate{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h2>Prédiction de Prix</h2>
+            </div>
+            <div class="card-body">
+                <form id="predictionForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="area">Surface (pieds carrés)</label>
+                            <input type="number" class="form-control" id="area" name="area" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="bedrooms">Nombre de chambres</label>
+                            <input type="number" class="form-control" id="bedrooms" name="bedrooms" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="bathrooms">Nombre de salles de bain</label>
+                            <input type="number" class="form-control" id="bathrooms" name="bathrooms" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="stories">Nombre d'étages</label>
+                            <input type="number" class="form-control" id="stories" name="stories" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="mainroad">Route principale</label>
+                            <select class="form-control" id="mainroad" name="mainroad" required>
+                                <option value="yes">Oui</option>
+                                <option value="no">Non</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="guestroom">Chambre d'amis</label>
+                            <select class="form-control" id="guestroom" name="guestroom" required>
+                                <option value="yes">Oui</option>
+                                <option value="no">Non</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="basement">Sous-sol</label>
+                            <select class="form-control" id="basement" name="basement" required>
+                                <option value="yes">Oui</option>
+                                <option value="no">Non</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="hotwaterheating">Chauffage eau chaude</label>
+                            <select class="form-control" id="hotwaterheating" name="hotwaterheating" required>
+                                <option value="yes">Oui</option>
+                                <option value="no">Non</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="airconditioning">Climatisation</label>
+                            <select class="form-control" id="airconditioning" name="airconditioning" required>
+                                <option value="yes">Oui</option>
+                                <option value="no">Non</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="parking">Places de parking</label>
+                            <input type="number" class="form-control" id="parking" name="parking" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="prefarea">Zone préférentielle</label>
+                            <select class="form-control" id="prefarea" name="prefarea" required>
+                                <option value="yes">Oui</option>
+                                <option value="no">Non</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="furnishing_status">État des meubles</label>
+                            <select class="form-control" id="furnishing_status" name="furnishing_status" required>
+                                <option value="furnished">Meublé</option>
+                                <option value="semi-furnished">Semi-meublé</option>
+                                <option value="unfurnished">Non meublé</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Prédire le Prix</button>
+                </form>
+
+                <div id="predictionResult" class="mt-4" style="display: none;">
+                    <h3>Résultat de la Prédiction</h3>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="alert alert-success">
+                                <h4>Prix Estimé</h4>
+                                <p id="predictedPrice" class="mb-0">--</p>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="alert alert-info">
+                                <h4>Intervalle de Confiance</h4>
+                                <p id="confidenceInterval" class="mb-0">--</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('predictionForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+        const response = await fetch('/predict', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (result.error) {
+            alert('Erreur: ' + result.error);
+            return;
+        }
+
+        document.getElementById('predictionResult').style.display = 'block';
+        document.getElementById('predictedPrice').textContent = 
+            new Intl.NumberFormat('fr-FR', { 
+                style: 'currency', 
+                currency: 'INR' 
+            }).format(result.predicted_price);
+        
+        document.getElementById('confidenceInterval').textContent = 
+            `Entre ${new Intl.NumberFormat('fr-FR', { 
+                style: 'currency', 
+                currency: 'INR' 
+            }).format(result.confidence_range.lower_bound)} et ${
+                new Intl.NumberFormat('fr-FR', { 
+                    style: 'currency', 
+                    currency: 'INR' 
+                }).format(result.confidence_range.upper_bound)}`;
+
+    } catch (error) {
+        console.error('Erreur:', error);
+        alert('Une erreur est survenue lors de la prédiction');
+    }
+});
+</script>
+{% endblock %}
